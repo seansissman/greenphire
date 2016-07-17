@@ -13,14 +13,16 @@ Description
 Collect favorite numbers for Powerball tickets.  Accomplish this with the following requirements:
 
 ```
-Capture the name of the employees entering the number.
-The first 5 favorite numbers will need to be in the range of 1 to 69 and unique. (remember that this is a drawing so there cannot be duplicates in this range of 5 numbers)
-6th favorite number will need to be in the range of 1 to 26 and flagged as the 6th Powerball number.
-Keep count of each individual favorite number provided to determine which numbers to use in our final winning number. (ie count the duplicates).
-Retrieve the max count of each unique duplicate number and use them as the powerball numbers.
-if there is a tie based on the max counts randomly select the tied number.
-Display all employees with their corresponding number entries.
-Display the final powerball number based on the requirements above.
+-Capture the name of the employees entering the number.
+-The first 5 favorite numbers will need to be in the range of 1 to 69 and unique. (remember that this is a
+drawing so there cannot be duplicates in this range of 5 numbers)
+-6th favorite number will need to be in the range of 1 to 26 and flagged as the 6th Powerball number.
+-Keep count of each individual favorite number provided to determine which numbers to use in our final
+winning number. (ie count the duplicates).
+-Retrieve the max count of each unique duplicate number and use them as the powerball numbers.
+-if there is a tie based on the max counts randomly select the tied number.
+-Display all employees with their corresponding number entries.
+-Display the final powerball number based on the requirements above.
 
 Sample output:
 Enter your first name: Wade
@@ -58,5 +60,10 @@ In a terminal, from the project directory run:
 During the initial execution a file named `favorite_numbers.db` will be created.  This file stores the history of the numbers entered as an SQLite database.
 To clear this history, simply delete the file.
 
+
+To Do / Additional Notes
+---
+- Requirements included sample output.  Within this sample output the prompts for the 4th and 5th favorite numbers do not include closing parenthesis `(`.  Confirm with the client if this is a typo or an actual requirement.
+- Some terminals automatically echo a newline after input is provided with the `input()` function, displaying an extra line between prompts.  Per the sample output, not all prompts are followed by a blank line.  Ask client if this is acceptable.
 
 
