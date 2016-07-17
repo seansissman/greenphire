@@ -1,11 +1,15 @@
 Greenphire Lottery
 ===
-
-
+### Project:    Greenphire Lottery
+### Autor:      Sean Sissman
+### Email:      seansissman@gmail.com
+### Version:    1.0.1
+### License:    GNU GPLv3
+### Main:       greenphire.py
+### Python:      3.4.3
 
 Description
 ---
-
 Collect favorite numbers for Powerball tickets.  Accomplish this with the following requirements:
 
 '''
@@ -35,20 +39,24 @@ Powerball winning number:
 15 26 34 55 63  powerball: 16
 '''
 
+
 Installation
 ---
-Only standard Python libraries are used, therefore only Python 3.4.3 is required for the environment.
+Only standard Python libraries are used, therefore only Python 3.4 is required for the environment.
 
-Three files and one directory are required:
+Three files are required.  Place them into your project directory:
 -  greenphire.py
 -  lottery.py
 -  greenphire_lottery.cfg
--  /data
 
 
 Use
 ---
 In a terminal, from the project directory run:
 'python greenphire.py'
+
+During the initial execution a file named 'favorite_numbers.db' will be created.  This file stores the history of the numbers entered as an SQLite database.
+To clear this history, simply delete the file.
+
 
 
