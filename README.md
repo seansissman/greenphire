@@ -6,7 +6,7 @@ Email:      seansissman@gmail.com
 Version:    1.0.1
 License:    GNU GPLv3
 Main:       greenphire.py
-Python:     3.4.3
+Python:     3.4.3  
 
 Description
 ---
