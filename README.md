@@ -67,8 +67,8 @@ In a terminal, from the project directory run:
 During the initial execution a file named `favorite_numbers.db` will be created.  This file stores the history of the numbers entered as an SQLite database.
 To clear this history, simply delete the file.
 
-Configurations can be made in `greenphire_lottery.cfg`.  Default configs are set for project requirements, but can be reconfigured for a different lottery.
-Note:  If changing the number of favorite numbers to be selected, you will also need to adjust the number of printing placeholders in the `Output` section.
+Configurations can be made in `greenphire_lottery.cfg`.  Default configs are set for project requirements, but can be reconfigured for a different lottery.  
+**Note**:  If changing the number of favorite numbers to be selected, you will also need to adjust the number of printing placeholders in the `Output` section.  You should also change the file configured under the `SQL` section or delete the existing file.
 
 
 To Do / Additional Notes
