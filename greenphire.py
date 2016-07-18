@@ -1,5 +1,7 @@
 import lottery
 from configparser import RawConfigParser, ExtendedInterpolation
+import sys
+import getopt
 
 
 CONFIG_FILE = "./greenphire_lottery.cfg"
@@ -34,45 +36,73 @@ def ordinal(num):
     return str(num) + suffix
 
 
-def main():
+def check_options(opts, args):
+    """ Handles the command line options"""
+    cont = False        # default to False
+    for opt, arg in opts:
+        if opt in ('-p', '--prompt'):
+            resp = input('\nWould you like to enter more favorite '
+                         'numbers? (y/[n]):  ')
+            try:
+                if resp.strip().lower()[0] == 'y':
+                    return True     # prompt has precedent
+            except IndexError:
+                pass
+        elif opt in ('-r', '--repeat'):
+            cont = True
+    return cont
 
-    # Prompt user for name
-    prompts_config = get_config('Prompts')
-    first_name = input(prompts_config['first_name'].format(''))
-    last_name = input(prompts_config['last_name'].format(''))
 
-    # Create Lottery object with Powerball attributes from config
-    lottery_config = get_config('Lottery')
-    pb = lottery.Lottery(**lottery_config)
+def main(argv):
 
-    # Prompt user and set favorite numbers
-    pb.set_numbers(prompts_config['favorites'], ordinal=ordinal)
+    # Parse the command-line options
+    try:
+        opts, args = getopt.getopt(argv, "pr", ["prompt", "repeat"])
+    except getopt.GetoptError:
+        print('Unrecognized option')
+        sys.exit(2)
 
-    # Get new favorite numbers
-    favorite_numbers = pb.get_favorite_numbers()
+    cont = True
+    while cont:
+        # Prompt user for name
+        prompts_config = get_config('Prompts')
+        first_name = input(prompts_config['first_name'].format(''))
+        last_name = input(prompts_config['last_name'].format(''))
 
-    # Add row to SQL database
-    if favorite_numbers:
-        db = get_config('SQL')['numbers']
-        pb.add_to_history(db, {'first_name': first_name},
-                              {'last_name': last_name})
+        # Create Lottery object with Powerball attributes from config
+        lottery_config = get_config('Lottery')
+        pb = lottery.Lottery(**lottery_config)
 
-        # Retrieve and print all history
-        all_history = pb.get_history(db)
-        history_format = get_config('Output')['history']
-        print()     # one blank line
-        for row in all_history:
-            print(history_format.format(*row[1:]))  # Skip index 0 (ID)
+        # Prompt user and set favorite numbers
+        pb.set_numbers(prompts_config['favorites'], ordinal=ordinal)
 
-        # Print message for Powerball drawing
-        drawing_message = get_config('Output')['drawing_message']
-        print('\n' + drawing_message.format(pb.name.capitalize(), ''))
+        # Get new favorite numbers
+        favorite_numbers = pb.get_favorite_numbers()
 
-        # Select and print numbers for drawing
-        drawing_nums = pb.get_drawing(db)
-        drawing_results = get_config('Output')['drawing']
-        print(drawing_results.format(*drawing_nums))
+        # Add row to SQL database
+        if favorite_numbers:
+            db = get_config('SQL')['numbers']
+            pb.add_to_history(db, {'first_name': first_name},
+                                  {'last_name': last_name})
+
+            # Retrieve and print all history
+            all_history = pb.get_history(db)
+            history_format = get_config('Output')['history']
+            print()     # one blank line
+            for row in all_history:
+                print(history_format.format(*row[1:]))  # Skip index 0 (ID)
+
+            # Print message for Powerball drawing
+            drawing_message = get_config('Output')['drawing_message']
+            print('\n' + drawing_message.format(pb.name.capitalize(), ''))
+
+            # Select and print numbers for drawing
+            drawing_nums = pb.get_drawing(db)
+            drawing_results = get_config('Output')['drawing']
+            print(drawing_results.format(*drawing_nums) + '\n')
+
+            cont = check_options(opts, args)    # check to continue
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

@@ -14,13 +14,13 @@ class Lottery(object):
         self.count = int(lottery_config['count'])
         self.min_number = int(lottery_config['min_number'])
         self.max_number = int(lottery_config['max_number'])
-        self.unique_numbers = bool(lottery_config['unique_numbers'])
-        self.bonus_number = bool(lottery_config['bonus_number'])
+        self.unique_numbers = lottery_config['unique_numbers']
+        self.bonus_number = lottery_config['bonus_number']
         if self.bonus_number:
             self.bonus_name = lottery_config['bonus_name']
             self.min_bonus_number = int(lottery_config['min_bonus_number'])
             self.max_bonus_number = int(lottery_config['max_bonus_number'])
-            self.bonus_unique = bool(lottery_config['bonus_unique'])
+            self.bonus_unique = lottery_config['bonus_unique']
 
         # Placeholder for new numbers
         self.favorite_numbers = []
@@ -29,20 +29,24 @@ class Lottery(object):
         self.db_cols = ''
         self.db_data = []
 
+
     def get_favorite_numbers(self):
         """ Returns favorite_numbers list"""
         return self.favorite_numbers
-        
+
+
     def get_num_count(self):
         """ Returns total number of numbers needed to play """
-        if self.bonus_number:
+        if self.bonus_number == 'True':
             return self.count + 1
         else:
             return self.count
-            
+
+
     def has_bonus_num(self):
-        """ Returns True is lottery uses a "bonus" number """
+        """ Returns 'True' is lottery uses a "bonus" number """
         return self.bonus_number
+
 
     def set_numbers(self, prompt_config, **kwargs):
         """ Prompts user for favorite numbers with prompts declared in 
@@ -55,11 +59,11 @@ class Lottery(object):
                                 self.favorite_numbers)
             # Create prompt_string with format defined in config file
             prompt_string = prompt_config.format(
-                kwargs['ordinal'](len(self.favorite_numbers) + 1),
-                self.min_number,
-                self.max_number,
-                exclusions,
-                ''          # right padding
+                selection = kwargs['ordinal'](len(self.favorite_numbers) + 1),
+                min = self.min_number,
+                max = self.max_number,
+                exclusions = exclusions,
+                padding = ' '          # right padding
             )
             # Prompt for a favorite number based on Lottery type and
             # previous selections.
@@ -72,14 +76,15 @@ class Lottery(object):
                 print(('{} is out of range!  Please select a different '
                        'number.').format(new_fav_num))
                 continue
-            elif self.unique_numbers:              # If numbers must be unique
+            elif self.unique_numbers == 'True':    # If numbers must be unique
                 if new_fav_num in self.favorite_numbers:   # If not unique
                     print(('{} has already been selected!  Please select a '
                            'different number.').format(new_fav_num))
                     continue
             self.favorite_numbers.append(new_fav_num)   # Append valid num
-        if self.bonus_number:
+        if self.bonus_number == 'True':
             self.set_bonus(prompt_config)
+
 
     def set_bonus(self, prompt_config):
         """ Prompts user for bonus number with prompts declared in
@@ -87,17 +92,17 @@ class Lottery(object):
         """
         # Create prompt_string with format defined in config file
         prompt_string = prompt_config.format(
-                            self.bonus_name,
-                            self.min_bonus_number,
-                            self.max_bonus_number,
-                            '',    # no exclusions
-                            ''     # right padding
+                            selection = self.bonus_name,
+                            min = self.min_bonus_number,
+                            max = self.max_bonus_number,
+                            exclusions = '',    # no exclusions
+                            padding = ' '     # right padding
                             )
         while True:
             try:                
                 bonus_num = int(input(prompt_string))
             except ValueError:
-                print('Bad input type!  Please select a number.')
+                print('Bad input type!  Please select an integer.')
                 continue
             if bonus_num < self.min_bonus_number or \
                 bonus_num > self.max_bonus_number:
@@ -106,6 +111,7 @@ class Lottery(object):
                 continue
             self.favorite_numbers.append(bonus_num)
             break
+
 
     def format_exclusions(self, favorite_numbers):
         """ Returns a formatted string listing numbers to be excluded """
@@ -121,8 +127,9 @@ class Lottery(object):
                 exclusions = exclusions + exclusion_list[i] + ', '
             return exclusions + 'and ' + exclusion_list[-1]
 
+
     def execute_sql(self, db, *statements):
-        """ Executes the SQL statement arguments """
+        """ Executes the SQL statement """
         conn = sqlite3.connect(db)
         c = conn.cursor()
         for statement in statements:
@@ -145,7 +152,7 @@ class Lottery(object):
                 self.db_data.append(v)
         
         # List of strings for header names for lottery numbers
-        if self.bonus_number:
+        if self.bonus_number == 'True':
             num_headers = ['num_{!s}'.format(x) 
                             for x in range(1, self.count + 2)
                             ]
@@ -174,12 +181,11 @@ class Lottery(object):
                             )
         
         # Execute SQL (create table and add row)
-        conn = sqlite3.connect(db)
-        c = conn.cursor()
-        c.execute(create_table)     # Create table if none exists
-        c.execute(new_row)          # Insert new row with new numbers
-        conn.commit()
-        conn.close()
+
+        with sqlite3.connect(db) as conn:
+            c = conn.cursor()
+            c.execute(create_table)     # Create table if none exists
+            c.execute(new_row)          # Insert new row with new numbers
 
 
     def get_history(self, db):
@@ -189,13 +195,11 @@ class Lottery(object):
         get_all = 'SELECT * FROM {table} ORDER BY id DESC;'.format(
                         table=self.name
                         )
-        
-        conn = sqlite3.connect(db)
-        c = conn.cursor()
-        c.execute(get_all)     # Query * 
-        all_rows = c.fetchall()
-        conn.close()
-        
+        with sqlite3.connect(db) as conn:
+            c = conn.cursor()
+            c.execute(get_all)     # Query *
+            all_rows = c.fetchall()
+
         return all_rows
         
     def get_drawing(self, db=None, all_history=None):
