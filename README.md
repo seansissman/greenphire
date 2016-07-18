@@ -14,14 +14,14 @@ Description
 Collect favorite numbers for Powerball tickets.  Accomplish this with the following requirements:
 
 
--Capture the name of the employees entering the number.
--The first 5 favorite numbers will need to be in the range of 1 to 69 and unique. (remember that this is a drawing so there cannot be duplicates in this range of 5 numbers)
--6th favorite number will need to be in the range of 1 to 26 and flagged as the 6th Powerball number.
--Keep count of each individual favorite number provided to determine which numbers to use in our final winning number. (ie count the duplicates).
--Retrieve the max count of each unique duplicate number and use them as the powerball numbers.
--if there is a tie based on the max counts randomly select the tied number.
--Display all employees with their corresponding number entries.
--Display the final powerball number based on the requirements above.
+- Capture the name of the employees entering the number.
+- The first 5 favorite numbers will need to be in the range of 1 to 69 and unique. (remember that this is a drawing so there cannot be duplicates in this range of 5 numbers)
+- 6th favorite number will need to be in the range of 1 to 26 and flagged as the 6th Powerball number.
+- Keep count of each individual favorite number provided to determine which numbers to use in our final winning number. (ie count the duplicates).
+- Retrieve the max count of each unique duplicate number and use them as the powerball numbers.
+- if there is a tie based on the max counts randomly select the tied number.
+- Display all employees with their corresponding number entries.
+- Display the final powerball number based on the requirements above.
 
 Sample output:
 ```
